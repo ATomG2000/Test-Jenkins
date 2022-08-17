@@ -1,0 +1,30 @@
+pipeline{
+    agent any
+    stages{
+        stage ('Prep'){
+            steps {
+                checkout scm
+            }
+        }
+        stage ('Build') {
+            steps {
+                script {
+                    if (fileExists('main.cpp') == false){
+                        unstable('Code file not found!')
+                    }
+                }
+            }
+        }
+        stage ('Deploy') {
+            when { 
+                not { 
+                    equals expected: UNSTABLE
+                    steps{
+                        echo 'Deploying it gently...'
+                    }
+                }
+
+            }
+        }
+    }
+}
